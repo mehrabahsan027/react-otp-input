@@ -30,16 +30,30 @@ export default function OtpInput() {
     }
 
 
+    const handlePaste = (e) => {
+        e.preventDefault()
+        const pastedData = e.clipboardData.getData('text').slice(0, TOTAL_DIGITS)
+        const newOtp = pastedData.split('').concat(Array(TOTAL_DIGITS).fill("")).slice(0, TOTAL_DIGITS)
+        setOtp(newOtp)
+        
+        // Focus last filled input or next empty
+        const nextIndex = Math.min(pastedData.length, TOTAL_DIGITS - 1)
+        inputRefs.current[nextIndex]?.focus()
+    }
+
   return (
 
     <div className='flex justify-center '>
 
         {
             otp?.map((item,index)=> {
-                return <input key={index} value={item} type="text" className='input-field' maxLength={1}
+                return <input key={index} value={item} type="text" className='input-field' 
+                   inputMode="numeric"
+                maxLength={1}
                 onChange={(e)=> handleChange(index,e)}
                 ref={(element) => inputRefs.current[index] = element}
                 onKeyDown={(e)=> handleKeyDown(index,e)}
+                onPaste={handlePaste}
                 />
             })
         }
